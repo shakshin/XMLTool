@@ -38,6 +38,9 @@ namespace xmlview
 
         private String path = String.Empty;
 
+        private bool visDrag = false;
+        private Point lastPos = new Point(-1000, 0);
+
         public MainWindow()
         {
             InitializeComponent();
@@ -361,6 +364,28 @@ namespace xmlview
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (!Exit()) e.Cancel = true;
+        }
+
+        private void visScroller_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                if (lastPos.X == -1000) {
+                    lastPos = e.GetPosition(visScroller);
+                    return;
+                }
+                Point pos = e.GetPosition(visScroller);
+                double xoff = pos.X - lastPos.X;
+                double yoff = pos.Y - lastPos.Y;
+                lastPos = pos;
+                if (xoff != 0)
+                    visScroller.ScrollToHorizontalOffset(visScroller.HorizontalOffset - xoff);
+                if (yoff != 0)
+                    visScroller.ScrollToVerticalOffset(visScroller.VerticalOffset - yoff);
+            } else
+            {
+                lastPos.X = -1000;
+            }
         }
     }
 }

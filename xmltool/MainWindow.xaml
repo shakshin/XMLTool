@@ -25,8 +25,8 @@
             <TabItem Header="Tree">
                 <TreeView Name="tree" FontFamily="Consolas" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling" />
             </TabItem>
-            <TabItem Header="Visual" >
-                <ScrollViewer Name="visScroller" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+            <TabItem Header="Visual">
+                <ScrollViewer Name="visScroller" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" MouseMove="visScroller_MouseMove" Focusable="False">
                 <StackPanel Orientation="Vertical" VerticalAlignment="Center" Name="panelVisuals">
                     
                 </StackPanel>
