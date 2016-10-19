@@ -23,7 +23,7 @@
         </Menu>
         <TabControl Grid.Row="1">
             <TabItem Header="Tree">
-                <TreeView Name="tree" FontFamily="Consolas" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling" />
+                <TreeView Name="tree" FontFamily="Consolas" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling" SelectedItemChanged="tree_SelectedItemChanged" />
             </TabItem>
             <TabItem Header="Visual">
                 <ScrollViewer Name="visScroller" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" MouseMove="visScroller_MouseMove" Focusable="False">

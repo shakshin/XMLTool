@@ -1,4 +1,6 @@
-﻿using ICSharpCode.AvalonEdit.Folding;
+﻿using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Search;
 using Microsoft.Win32;
 using System;
@@ -18,6 +20,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace xmlview
@@ -158,7 +161,8 @@ namespace xmlview
                 
             try
             {
-                XDocument xdoc = XDocument.Parse(content);
+                XDocument xdoc = XDocument.Parse(content, LoadOptions.SetLineInfo);
+                
 
                 foreach (XElement x in xdoc.Elements())
                 {
@@ -385,6 +389,22 @@ namespace xmlview
             } else
             {
                 lastPos.X = -1000;
+            }
+        }
+        
+
+        private void tree_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            if (tree.SelectedItem == null) return;
+            IXmlLineInfo info = (tree.SelectedItem as TreeViewItem).Tag as IXmlLineInfo;
+            if (info.HasLineInfo())
+            {
+                TextEditor text = ((Application.Current as App).MainWindow as MainWindow).text;
+                text.ScrollTo(info.LineNumber, info.LinePosition);
+                text.TextArea.Caret.Line = info.LineNumber;
+                text.TextArea.Caret.Column = info.LinePosition;
+                DocumentLine line = text.Document.GetLineByOffset(text.CaretOffset);
+                text.Select(line.Offset, line.Length);
             }
         }
     }

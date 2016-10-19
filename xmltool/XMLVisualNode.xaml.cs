@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Document;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace xmlview
@@ -27,12 +30,12 @@ namespace xmlview
         private XElement src;
         private Visual owner;
 
+       
+
         private void SetupCaption()
         {
             captionContainer.BorderBrush = Brushes.Black;
-            captionContainer.Background = Brushes.LightYellow;
-
-         
+            captionContainer.Background = Brushes.LightYellow;  
         }
 
         private void SetupCaptionEx()
@@ -166,6 +169,20 @@ namespace xmlview
             else
             {
                 expander.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void captionEx_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            IXmlLineInfo info = (IXmlLineInfo)src;
+            if (info.HasLineInfo())
+            {
+                TextEditor text = ((App.Current as App).MainWindow as MainWindow).text;
+                text.ScrollTo(info.LineNumber, info.LinePosition);
+                text.TextArea.Caret.Line = info.LineNumber;
+                text.TextArea.Caret.Column = info.LinePosition;
+                DocumentLine line = text.Document.GetLineByOffset(text.CaretOffset);
+                text.Select(line.Offset, line.Length);
             }
         }
     }
