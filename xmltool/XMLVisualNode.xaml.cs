@@ -35,7 +35,8 @@ namespace xmlview
         private void SetupCaption()
         {
             captionContainer.BorderBrush = Brushes.Black;
-            captionContainer.Background = Brushes.LightYellow;  
+            captionContainer.Background = Brushes.LightYellow;
+            captionContainer.SnapsToDevicePixels = true;
         }
 
         private void SetupCaptionEx()
@@ -126,14 +127,16 @@ namespace xmlview
 
                             Rectangle r0 = new Rectangle()
                             {
-                                Stroke = null
+                                Stroke = null,
+                                SnapsToDevicePixels = true
                             };
                             r0.SetValue(Grid.RowProperty, cnt == 1 ? 0 : 1);
 
                             Rectangle r1 = new Rectangle()
                             {
                                 Stroke = Brushes.Black,
-                                Width = 1
+                                Width = 1,
+                                SnapsToDevicePixels = true
                             };
                             r1.SetValue(Grid.RowProperty, cnt == 1 ? 1 : 0);
 
@@ -146,7 +149,8 @@ namespace xmlview
                     {
                         container.Children.Add(new Rectangle() {
                             Stroke = Brushes.Black,
-                            Width = 1
+                            Width = 1,
+                            SnapsToDevicePixels = true
                         });
                     }
 
@@ -154,7 +158,8 @@ namespace xmlview
                         Stroke = Brushes.Black,
                         Height = 1,
                         Width = 20,
-                        VerticalAlignment = VerticalAlignment.Center
+                        VerticalAlignment = VerticalAlignment.Center,
+                        SnapsToDevicePixels = true
                     });
 
                     XMLVisualNode childNode = new XMLVisualNode(child, owner);
@@ -174,16 +179,7 @@ namespace xmlview
 
         private void captionEx_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            IXmlLineInfo info = (IXmlLineInfo)src;
-            if (info.HasLineInfo())
-            {
-                TextEditor text = ((App.Current as App).MainWindow as MainWindow).text;
-                text.ScrollTo(info.LineNumber, info.LinePosition);
-                text.TextArea.Caret.Line = info.LineNumber;
-                text.TextArea.Caret.Column = info.LinePosition;
-                DocumentLine line = text.Document.GetLineByOffset(text.CaretOffset);
-                text.Select(line.Offset, line.Length);
-            }
+            ((App.Current as App).MainWindow as MainWindow).SelectInEditor(src);
         }
     }
 }

@@ -41,7 +41,6 @@ namespace xmlview
 
         private String path = String.Empty;
 
-        private bool visDrag = false;
         private Point lastPos = new Point(-1000, 0);
 
         public MainWindow()
@@ -138,7 +137,7 @@ namespace xmlview
             }
             catch (Exception ex)
             {
-                MessageBox.Show(String.Format("Failed to save file:\n{0}", ex.Message), "Eerror", MessageBoxButton.OK);
+                MessageBox.Show(String.Format("Failed to save file:\n{0}", ex.Message), "Error", MessageBoxButton.OK);
                 return false;
             }
         }
@@ -147,8 +146,8 @@ namespace xmlview
         {
             text.ShowLineNumbers = true;
 
-            text.TextArea.DefaultInputHandler.NestedInputHandlers.Add(new SearchInputHandler(text.TextArea));
-
+            SearchPanel.Install(text);
+            
             foldingManager = FoldingManager.Install(text.TextArea);
             foldingStrategy = new XmlFoldingStrategy();
         }
@@ -254,22 +253,6 @@ namespace xmlview
             return header;
         }
 
-        private StackPanel BuildToolTip(XElement element)
-        {
-            StackPanel tip = new StackPanel();
-            tip.Orientation = Orientation.Vertical;
-
-            tip.Children.Add(new TextBlock() {
-            //    FontWeight = FontWeights.Bold,
-                Text = element.ToString()
-            });
-
-            
-
-
-            return tip;
-        }
-
         private void AddElement(XElement element, TreeViewItem parent)
         {
             TreeViewItem newItem = new TreeViewItem();
@@ -277,23 +260,17 @@ namespace xmlview
             newItem.IsExpanded = true;
 
             newItem.Header = BuildHeader(element);
-            //newItem.ToolTip = BuildToolTip(element);
 
             if (parent == null)
             {
-
                 tree.Items.Add(newItem);
-
             }
             else
             {
-            
                 parent.Items.Add(newItem);
-            
             }
             
             foreach (XElement x in element.Elements()) AddElement(x, newItem);
-            
         }
 
         private void Window_KeyUp(object sender, KeyEventArgs e)
@@ -311,6 +288,9 @@ namespace xmlview
                 } else if (e.Key == Key.S)
                 {
                     SaveFile();
+                } else if (e.Key == Key.O)
+                {
+                    OpenInteractive();
                 }
             } else if (e.Key == Key.Escape) this.Close();
         }
@@ -351,18 +331,7 @@ namespace xmlview
 
         private Boolean Exit()
         {
-            if (text.IsModified)
-            {
-                MessageBoxResult res = MessageBox.Show(this, "XML was modified. Would you like to save it?", "Warning", MessageBoxButton.YesNoCancel);
-                if (res == MessageBoxResult.Cancel) return false;
-                if (res == MessageBoxResult.No) return true;
-                if (res == MessageBoxResult.Yes)
-                {
-                    if (SaveFile()) return true;
-                    return false;
-                }
-            }
-            return true;
+            return PromptSave();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -396,7 +365,12 @@ namespace xmlview
         private void tree_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             if (tree.SelectedItem == null) return;
-            IXmlLineInfo info = (tree.SelectedItem as TreeViewItem).Tag as IXmlLineInfo;
+            SelectInEditor((tree.SelectedItem as TreeViewItem).Tag as XElement);
+        }
+
+        public void SelectInEditor(XElement x)
+        {
+            IXmlLineInfo info = x as IXmlLineInfo;
             if (info.HasLineInfo())
             {
                 TextEditor text = ((Application.Current as App).MainWindow as MainWindow).text;
@@ -405,6 +379,51 @@ namespace xmlview
                 text.TextArea.Caret.Column = info.LinePosition;
                 DocumentLine line = text.Document.GetLineByOffset(text.CaretOffset);
                 text.Select(line.Offset, line.Length);
+            }
+        }
+
+        private void Window_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                
+                OpenFile(files[0]);
+            }
+        }
+
+        private bool PromptSave()
+        {
+            if (text.IsModified)
+            {
+                MessageBoxResult res = MessageBox.Show(this, "XML was modified. Would you like to save it?", "Warning", MessageBoxButton.YesNoCancel);
+                if (res == MessageBoxResult.Cancel) return false;
+                if (res == MessageBoxResult.Yes)
+                {
+                    if (!SaveFile()) return false;
+                }
+                return true;
+            }
+            return true;
+        }
+
+        private void MenuItem_Click_3(object sender, RoutedEventArgs e)
+        {
+            OpenInteractive();
+        }
+
+        private void OpenInteractive()
+        {
+            if (!PromptSave()) return;
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.DefaultExt = ".xml";
+            dlg.Filter = "XML files|*.xml|All files|*.*";
+            dlg.CheckPathExists = true;
+            dlg.CheckFileExists = true;
+            dlg.Multiselect = false;
+            if (dlg.ShowDialog() == true)
+            {
+                OpenFile(dlg.FileName);
             }
         }
     }

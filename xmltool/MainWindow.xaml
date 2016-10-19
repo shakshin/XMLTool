@@ -6,7 +6,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:xmlview"
         mc:Ignorable="d"
-        Title="XMLView" Height="350" Width="525" WindowState="Maximized" KeyUp="Window_KeyUp" Closing="Window_Closing">
+        Title="XMLView" Height="350" Width="525" WindowState="Maximized" KeyUp="Window_KeyUp" Closing="Window_Closing" AllowDrop="True" Drop="Window_Drop" 
+        
+        >
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -16,6 +18,7 @@
         </Grid.RowDefinitions>
         <Menu Grid.Row="0">
             <MenuItem Header="File">
+                <MenuItem Header="Open" Click="MenuItem_Click_3"/>
                 <MenuItem Header="Save" Click="MenuItem_Click"/>
                 <MenuItem Header="Save as.." Click="MenuItem_Click_1"/>
                 <MenuItem Header="Exit" Click="MenuItem_Click_2"/>
