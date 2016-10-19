@@ -1,0 +1,52 @@
+﻿<UserControl x:Class="xmlview.XMLVisualNode"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:xmlview"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+
+    <StackPanel Orientation="Horizontal" Margin="10">
+        <Border VerticalAlignment="Center" Height="auto" BorderThickness="1" CornerRadius="5" Padding="8,0" Name="captionContainer">
+            <StackPanel>
+                <StackPanel VerticalAlignment="Center" Name="captionEx"/>
+            </StackPanel>
+        </Border>
+        <Ellipse Width="10" Height="10" RenderTransformOrigin="0.5,0.5" Name="expander" Cursor="Hand">
+            <Ellipse.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform X="-5"/>
+                </TransformGroup>
+            </Ellipse.RenderTransform>
+        </Ellipse>
+        <StackPanel Orientation="Horizontal" Name="expandContainer" VerticalAlignment="Center">
+            <Rectangle Height="1" Width="20" VerticalAlignment="Center" Stroke="{DynamicResource {x:Static SystemColors.ActiveCaptionTextBrushKey}}" RenderTransformOrigin="0.5,0.5"  >
+                <Rectangle.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform X="-5"/>
+                    </TransformGroup>
+                </Rectangle.RenderTransform>
+            </Rectangle>
+
+            <StackPanel VerticalAlignment="Center" Orientation="Vertical" Name="stackItems" RenderTransformOrigin="0.5,0.5">
+                <StackPanel.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform X="-5"/>
+                    </TransformGroup>
+                </StackPanel.RenderTransform>
+
+            </StackPanel>
+        </StackPanel>
+    </StackPanel>
+
+</UserControl>
